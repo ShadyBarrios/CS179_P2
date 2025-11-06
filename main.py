@@ -1,7 +1,7 @@
 import math
-# TODO: Input Handling
+import random
 
-# TODO: Clustering Algorithm
+
 class Coordinate:
     def __init__(self, x, y):
         self.loc = (round(x, 1), round(y, 1))
@@ -34,6 +34,51 @@ class Coordinate:
     def get_y(self) -> float:
         return self.loc[1]
 
-# TODO: Route Finding
+def k_means_clustering(k, coordinates: list[Coordinate]):
+    clusters = {}
+    old_clusters = None
+    
+    # Initialize Centers
+    centers = random.sample(coordinates, k)
+    
+    while True:
+        for i in range(k):
+            clusters[i] = []
+        
+        # Decide class memberships
+        for coordinate in coordinates:
+            shortest_dist = float('inf')
+            cluster = -1
+            for center_idx, center in enumerate(centers):
+                distance_to_center = coordinate.distanceTo(center)
+                if distance_to_center < shortest_dist:
+                    shortest_dist = distance_to_center
+                    cluster = center_idx
+            clusters[cluster].append(coordinate)
 
-# TODO: Output Handling
+        if clusters == old_clusters:
+            break
+        
+        # Calculate new centers
+        for cluster, values in clusters.items():
+            x_sum = 0
+            y_sum = 0
+            for coordinate in values:
+                x_sum += coordinate.get_x()
+                y_sum += coordinate.get_y()
+            centers[cluster] = Coordinate(x_sum / len(values), y_sum / len(values))
+        old_clusters = clusters
+    return centers, clusters
+
+def main():
+    # TODO: Input Handling
+    coordinates = [Coordinate(1, 1), Coordinate(1, 2), Coordinate(2, 1), Coordinate(6, 6), Coordinate(6, 5), Coordinate(5,6)]
+    distance_matrix = [[coordinate_A.distanceTo(coordinate_B) for coordinate_B in coordinates] for coordinate_A in coordinates]
+    # TODO: Cluster for all 1 <= k <= 4
+    centers, clusters = k_means_clustering(2, coordinates)
+    # TODO: Route Finding
+    # TODO: Output Handling
+
+
+if __name__ == "__main__":
+    main()
