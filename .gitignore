@@ -1,1 +1,5 @@
 .venv/
+tests/
+solutions/
+__pycache__/
+playground.py

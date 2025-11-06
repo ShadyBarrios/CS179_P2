@@ -1,38 +1,7 @@
-import math
 import random
-
-
-class Coordinate:
-    def __init__(self, x, y):
-        self.loc = (round(x, 1), round(y, 1))
-    
-    # calculates the euclidean distance from self to arg coor
-    def distanceTo(self, coor) -> float:
-        x = self.loc[0] - coor.loc[0]
-        y = self.loc[1] - coor.loc[1]
-        x = x*x # will always be positive
-        y = y*y # will always be positive
-        dist = math.sqrt(x + y)
-        return round(dist, 1)
-    
-    # determines if self is contained in arg of list[Coordinate]
-    def isIn(self, coordinates: list) -> bool:
-        for coordinate in coordinates:
-            if coordinate.get_x() == self.get_x() and coordinate.get_y() == self.get_y():
-                return True
-        return False
-
-    # returns formatted string for file writing
-    def __str__(self) -> str:
-        return f"{self.loc[0]}\t{self.loc[1]}"
-    
-    # getter for x coordinate
-    def get_x(self) -> float:
-        return self.loc[0]
-    
-    # getter for y coordinate
-    def get_y(self) -> float:
-        return self.loc[1]
+from datetime import datetime
+from utils import *
+from coordinate import Coordinate
 
 def k_means_clustering(k, coordinates: list[Coordinate]):
     clusters = {}
@@ -109,7 +78,24 @@ def find_routes(centers, clusters, coordinates):
 
 def main():
     # TODO: Input Handling
-    coordinates = [Coordinate(1, 1), Coordinate(1, 2), Coordinate(2, 1), Coordinate(6, 6), Coordinate(6, 5), Coordinate(5,6)]
+    input_file = input("Enter the name of the file: ")
+    input_file_root = input_file[:-4]
+    if not valid_file(input_file):
+        exit()
+
+    coordinates = parse_input(input_file)
+    # coordinates = [Coordinate(1, 1), Coordinate(1, 2), Coordinate(2, 1), Coordinate(6, 6), Coordinate(6, 5), Coordinate(5,6)]
+    num_coordinates = len(coordinates)
+
+    dt = datetime.now()
+    current_time = dt.time()
+    hour, minute = (current_time.hour, current_time.minute)
+    minute_predict = minute + 5 # only given five minutes to compute
+    est_time = parse_time(hour, minute_predict)
+
+    print(f"There are {num_coordinates} nodes: Solutions will be available in five minutes ({est_time})")
+
+    
     distance_matrix = [[coordinate_A.distanceTo(coordinate_B) for coordinate_B in coordinates] for coordinate_A in coordinates]
     # TODO: Cluster for all 1 <= k <= 4
 
@@ -130,6 +116,19 @@ def main():
     print(results)
 
     # TODO: Output Handling
+    # create your instances of Solution, each for the "m number of drones" solutions
+    # then export using solution.export_to_file("solutions", input_file_root)
+    # export_results  = solution.export_to_file("solutions", input_file_root)
+    # export_successful = export_results[0]
+    # file_names = export_results[1]
+    # if export_results[0]: # successful export
+    #     output = "Writing "
+    #     for file_name in file_names:
+    #         output += f"{file_name} "
+    #     output += "to disk"
+    #     print(output)
+    # else:
+    #     print("Solution export unsuccessful")
 
 
 if __name__ == "__main__":
