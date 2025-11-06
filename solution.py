@@ -48,10 +48,10 @@ class Solution:
         output = f"{self.num_drones})\tIf you use {self.num_drones} drone(s), the total route will be {self.total_route_len:.1f} meters\n"
 
         for i in range(self.num_drones):
-            output += f"\t{roman_nums}.\tLanding Pad {i+1} "
+            output += f"\t{roman_nums[i]}.\tLanding Pad {i+1} "
             output += f"should be at [{int(self.landing_pads[i].get_x())},{int(self.landing_pads[i].get_y())}], "
             output += f"serving {self.servings_per_drone[i]} locations, "
-            output += f"route is {self.drone_routes_len:.1f} meters\n"
+            output += f"route is {self.drone_routes_len[i]:.1f} meters\n"
         
         return output
 
