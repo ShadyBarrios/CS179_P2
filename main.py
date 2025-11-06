@@ -60,13 +60,13 @@ def k_means_clustering(k, coordinates: list[Coordinate]):
             break
         
         # Calculate new centers
-        for cluster, values in clusters.items():
+        for cluster, cluster_coords in clusters.items():
             x_sum = 0
             y_sum = 0
-            for coordinate in values:
-                x_sum += coordinate.get_x()
-                y_sum += coordinate.get_y()
-            centers[cluster] = Coordinate(x_sum / len(values), y_sum / len(values))
+            for coord in cluster_coords:
+                x_sum += coord.get_x()
+                y_sum += coord.get_y()
+            centers[cluster] = Coordinate(x_sum / len(cluster_coords), y_sum / len(cluster_coords))
         old_clusters = clusters
     return centers, clusters
 
