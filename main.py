@@ -46,7 +46,7 @@ def calculate_squared_error(centers, clusters, coordinate_list):
         cluster_center = centers[cluster_idx]
         for coordinate_idx in cluster_coords:
             objective += (cluster_center.distanceTo(coordinate_list[coordinate_idx])**2)
-    return round(objective, 2)
+    return objective
 
 def _find_nearest_neighbor(target: Coordinate, neighbors: list[int], visited: set[int], coordinate_list: list[Coordinate], chance):
     nearest_neighbor = None
@@ -62,15 +62,17 @@ def _find_nearest_neighbor(target: Coordinate, neighbors: list[int], visited: se
     return nearest_neighbor, dist_bsf
 
 def _find_route(start, coordinate_indexes, coordinate_list, chance):
-    first, _ = _find_nearest_neighbor(start, coordinate_indexes, set(), coordinate_list, 0)
+    # Include distance from landing pad to first point in route
+    first, distance = _find_nearest_neighbor(start, coordinate_indexes, set(), coordinate_list, 0)
     route = [first]
     visited = set(route)
-    distance = 0
     while len(visited) < len(coordinate_indexes):
         nn, nn_dist = _find_nearest_neighbor(coordinate_list[route[-1]], coordinate_indexes, visited, coordinate_list, chance)
         distance += nn_dist
         route.append(nn)
         visited.add(nn)
+    # Add distance from last point in route to landing pad
+    distance += start.distanceTo(coordinate_list[route[-1]])
     return route, distance
 
 def find_routes(centers, clusters, coordinates, duration, chance):
@@ -88,7 +90,7 @@ def find_routes(centers, clusters, coordinates, duration, chance):
     return results
 
 def main():
-    # TODO: Input Handling
+    # Input Handling
     input_file = input("Enter the name of the file: ")
     input_file_root = input_file[:-4]
     if not valid_file(input_file):
@@ -113,7 +115,7 @@ def main():
                 objective_function = score
                 centers_bsf = centers
                 clusters_bsf = clusters
-        # TODO: Route Finding
+        # Route Finding
         results = find_routes(centers_bsf, clusters_bsf, coordinates, duration=20, chance=0.10)
         servings_per_drone = [len(val) for val in clusters_bsf.values()]
         drone_routes = []
@@ -126,9 +128,8 @@ def main():
         solutions.append(solution)
         print(solution)
 
-    # TODO: Output Handling
-    # create your instances of Solution, each for the "m number of drones" solutions
-    # then export using solution.export_to_file("solutions", input_file_root)
+    # Output Handling
+    # TODO: Add visual route output
     solution_choice = int(input("Please select your choice 1 to 4: "))
     if solution_choice < 1 or solution_choice > 4:
         print("Invalid choice")
