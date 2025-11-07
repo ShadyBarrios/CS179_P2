@@ -118,17 +118,20 @@ def main():
     # TODO: Output Handling
     # create your instances of Solution, each for the "m number of drones" solutions
     # then export using solution.export_to_file("solutions", input_file_root)
-    # export_results  = solution.export_to_file("solutions", input_file_root)
-    # export_successful = export_results[0]
-    # file_names = export_results[1]
-    # if export_results[0]: # successful export
-    #     output = "Writing "
-    #     for file_name in file_names:
-    #         output += f"{file_name} "
-    #     output += "to disk"
-    #     print(output)
-    # else:
-    #     print("Solution export unsuccessful")
+    solution_choice = int(input("Please select your choice 1 to 4: "))
+    if solution_choice < 1 or solution_choice > 4:
+        print("Invalid choice")
+        exit()
+    export_results  = solutions[solution_choice-1].export_to_file("solutions", input_file_root)
+    file_names = export_results[1]
+    if export_results[0]: # successful export
+        output = "Writing "
+        for file_name in file_names:
+            output += f"{file_name} "
+        output += "to disk"
+        print(output)
+    else:
+        print("Solution export unsuccessful")
 
 
 if __name__ == "__main__":
