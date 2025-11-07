@@ -1,7 +1,7 @@
 import random
-from datetime import datetime
 from utils import *
 from coordinate import Coordinate
+from solution import Solution
 
 def k_means_clustering(k, coordinates: list[Coordinate]):
     clusters = {}
@@ -84,36 +84,36 @@ def main():
         exit()
 
     coordinates = parse_input(input_file)
-    # coordinates = [Coordinate(1, 1), Coordinate(1, 2), Coordinate(2, 1), Coordinate(6, 6), Coordinate(6, 5), Coordinate(5,6)]
     num_coordinates = len(coordinates)
-
-    dt = datetime.now()
-    current_time = dt.time()
-    hour, minute = (current_time.hour, current_time.minute)
-    minute_predict = minute + 5 # only given five minutes to compute
-    est_time = parse_time(hour, minute_predict)
+    est_time = get_end_time()
 
     print(f"There are {num_coordinates} nodes: Solutions will be available in five minutes ({est_time})")
 
-    
-    distance_matrix = [[coordinate_A.distanceTo(coordinate_B) for coordinate_B in coordinates] for coordinate_A in coordinates]
-    # TODO: Cluster for all 1 <= k <= 4
-
-    # Run multiple trials with random starts 
-    centers_bsf = None
-    clusters_bsf = None
-    objective_function = float("inf")
-    for _ in range(10):
-        centers, clusters = k_means_clustering(2, coordinates)
-        score = calculate_squared_error(centers, clusters, coordinates)
-        if score < objective_function:
-            objective_function = score
-            centers_bsf = centers
-            clusters_bsf = clusters
-    print(objective_function)
-    # TODO: Route Finding
-    results = find_routes(centers, clusters, coordinates)
-    print(results)
+    solutions = []
+    for num_drones in range(1, 5):
+        # Run multiple trials with random starts 
+        centers_bsf = None
+        clusters_bsf = None
+        objective_function = float("inf")
+        for _ in range(100):
+            centers, clusters = k_means_clustering(num_drones, coordinates)
+            score = calculate_squared_error(centers, clusters, coordinates)
+            if score < objective_function:
+                objective_function = score
+                centers_bsf = centers
+                clusters_bsf = clusters
+        # TODO: Route Finding
+        results = find_routes(centers_bsf, clusters_bsf, coordinates)
+        servings_per_drone = [len(val) for val in clusters_bsf.values()]
+        drone_routes = []
+        drone_route_len = []
+        for result in results:
+            drone_routes.append(result[0])
+            drone_route_len.append(result[1])
+        total_route_len = sum(drone_route_len)
+        solution = Solution(num_drones, num_coordinates, total_route_len, centers_bsf, servings_per_drone, drone_route_len, drone_routes)
+        solutions.append(solution)
+        print(solution)
 
     # TODO: Output Handling
     # create your instances of Solution, each for the "m number of drones" solutions

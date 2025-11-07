@@ -1,5 +1,6 @@
 import os
 from coordinate import Coordinate
+from datetime import datetime
 
 def valid_file(file_name: str) -> bool:
     # must be txt file
@@ -92,6 +93,14 @@ def parse_time(hour:int, minute:int):
     
     time = f"{hour:02d}:{minute:02d}{meridiem}"
     return time
+
+def get_end_time():
+    dt = datetime.now()
+    current_time = dt.time()
+    hour, minute = (current_time.hour, current_time.minute)
+    minute_predict = minute + 5 # only given five minutes to compute
+    est_time = parse_time(hour, minute_predict)
+    return est_time
 
 def write_to_file(locations:list[int], file_name:str) -> bool:
     try:
