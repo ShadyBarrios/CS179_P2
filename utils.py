@@ -106,7 +106,7 @@ def write_to_file(locations:list[int], file_name:str) -> bool:
     try:
         with open(file_name, "w") as file:
             for location in locations:
-                line = f"{location}\n"
+                line = f"{location+1}\n"
                 file.write(line)
         return True
     except FileNotFoundError:

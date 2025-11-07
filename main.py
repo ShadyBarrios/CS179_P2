@@ -1,4 +1,5 @@
 import random
+import time
 from utils import *
 from coordinate import Coordinate
 from solution import Solution
@@ -47,33 +48,43 @@ def calculate_squared_error(centers, clusters, coordinate_list):
             objective += (cluster_center.distanceTo(coordinate_list[coordinate_idx])**2)
     return round(objective, 2)
 
-def _find_nearest_neighbor(target: Coordinate, neighbors: list[int], visited: set[int], coordinate_list: list[Coordinate]):
+def _find_nearest_neighbor(target: Coordinate, neighbors: list[int], visited: set[int], coordinate_list: list[Coordinate], chance):
     nearest_neighbor = None
-    dist_bsf = float('inf')
+    for coord_idx in neighbors:
+        if coord_idx not in visited:
+            nearest_neighbor = coord_idx
+    dist_bsf = target.distanceTo(coordinate_list[nearest_neighbor])
     for coord_idx in neighbors:
         dist = target.distanceTo(coordinate_list[coord_idx])
-        if dist < dist_bsf and coord_idx not in visited:
+        if dist < dist_bsf and coord_idx not in visited and random.random() > chance:
             dist_bsf = dist
             nearest_neighbor = coord_idx
     return nearest_neighbor, dist_bsf
 
-def _find_route(start, coordinate_indexes, coordinate_list):
-    first, _ = _find_nearest_neighbor(start, coordinate_indexes, set(), coordinate_list)
+def _find_route(start, coordinate_indexes, coordinate_list, chance):
+    first, _ = _find_nearest_neighbor(start, coordinate_indexes, set(), coordinate_list, 0)
     route = [first]
     visited = set(route)
     distance = 0
     while len(visited) < len(coordinate_indexes):
-        nn, nn_dist = _find_nearest_neighbor(coordinate_list[route[-1]], coordinate_indexes, visited, coordinate_list)
+        nn, nn_dist = _find_nearest_neighbor(coordinate_list[route[-1]], coordinate_indexes, visited, coordinate_list, chance)
         distance += nn_dist
         route.append(nn)
         visited.add(nn)
     return route, distance
 
-def find_routes(centers, clusters, coordinates):
+def find_routes(centers, clusters, coordinates, duration, chance):
     results = []
     for cluster_idx, cluster_coords in clusters.items():
-        route, distance = _find_route(centers[cluster_idx], cluster_coords, coordinates)
-        results.append((route, distance))
+        start_time = time.time()
+        route_bsf = None
+        distance_bsf = float('inf')
+        while time.time() < start_time + duration:
+            route, distance = _find_route(centers[cluster_idx], cluster_coords, coordinates, chance)
+            if distance < distance_bsf:
+                distance_bsf = distance
+                route_bsf = route
+        results.append((route_bsf, distance_bsf))
     return results
 
 def main():
@@ -94,7 +105,7 @@ def main():
         # Run multiple trials with random starts 
         centers_bsf = None
         clusters_bsf = None
-        objective_function = float("inf")
+        objective_function = float('inf')
         for _ in range(100):
             centers, clusters = k_means_clustering(num_drones, coordinates)
             score = calculate_squared_error(centers, clusters, coordinates)
@@ -103,7 +114,7 @@ def main():
                 centers_bsf = centers
                 clusters_bsf = clusters
         # TODO: Route Finding
-        results = find_routes(centers_bsf, clusters_bsf, coordinates)
+        results = find_routes(centers_bsf, clusters_bsf, coordinates, duration=20, chance=0.10)
         servings_per_drone = [len(val) for val in clusters_bsf.values()]
         drone_routes = []
         drone_route_len = []
