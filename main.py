@@ -36,6 +36,9 @@ def k_means_clustering(k, coordinates: list[Coordinate]):
             for coordinate_idx in cluster_coords:
                 x_sum += coordinates[coordinate_idx].get_x()
                 y_sum += coordinates[coordinate_idx].get_y()
+            if len(cluster_coords) == 0:
+                print("ERROR: len(cluster_coords) == 0")
+                continue
             centers[cluster_idx] = Coordinate(x_sum / len(cluster_coords), y_sum / len(cluster_coords))
         old_clusters = clusters
     return centers, clusters
@@ -92,11 +95,11 @@ def find_routes(centers, clusters, coordinates, duration, chance):
 def main():
     # Input Handling
     input_file = input("Enter the name of the file: ")
-    input_file_root = input_file[:-4]
     if not valid_file(input_file):
         exit()
 
     coordinates = parse_input(input_file)
+    input_file_root = get_root_name(input_file)
     num_coordinates = len(coordinates)
     est_time = get_end_time()
 
@@ -134,16 +137,22 @@ def main():
     if solution_choice < 1 or solution_choice > 4:
         print("Invalid choice")
         exit()
-    export_results  = solutions[solution_choice-1].export_to_file("solutions", input_file_root)
-    file_names = export_results[1]
-    if export_results[0]: # successful export
+    chosen_solution:Solution = solutions[solution_choice-1]
+    txt_export_successful, txt_file_names  = chosen_solution.export_to_txt_file("solutions", input_file_root)
+    if txt_export_successful: # successful export
         output = "Writing "
-        for file_name in file_names:
+        for file_name in txt_file_names:
             output += f"{file_name} "
         output += "to disk"
         print(output)
     else:
-        print("Solution export unsuccessful")
+        print("Solution txt export unsuccessful")
+
+    png_export_successful, png_file_name = chosen_solution.export_to_png_file("solutions", input_file_root, coordinates)
+    if png_export_successful:
+        print(f"Visualization successfully exported to {png_file_name}")
+    else:
+        print(f"Visualization export unsuccessful")
 
 
 if __name__ == "__main__":
