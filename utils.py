@@ -115,27 +115,37 @@ def write_to_file(locations:list[int], file_name:str) -> bool:
         print(f"ERROR: {file_name} could not be opened")
         return False
     
+
+# TODO: Create convert_solution_list() function which converts SOLUTION file to list of indexes 
+# corresponding to order of points visited in SOLUTION.
+# This will be utilized the same way as best_route in P1
+# RETURNS list[int]
+def convert_solution_list(file_name) -> list[int]:
+    return [0, 0] # stub
+
 # takes list of file_names and creates a unified "overall solution jpeg". Returns true if successful
-def generate_overall_graph(file_names:list[str]) -> bool:
+def generate_overall_graph(file_names:list[str], input_name) -> bool:
     num_drones = len(file_names)
     
-    file_line_counts = [] # stores number of lines per file (aka number of nodes given drone must visit)
-    # output file is stored as a list of locations for drone to visit
-    for file_name in file_names:
-        line_count = 0
-        with open(file_name, "r") as file:
-            data = file.read()
-            line_count = data.count('\n')
-            x_coord, y_coord = get_plot_route()
+    drone_routes = []
 
+    plot_color_dict = ["pink", "green", "blue", "yellow"]
+
+    for index in num_drones:
+        file_name = file_names[index]
+        coordinates = parse_input(file_name)
+        # TODO: Create convert_solution_list() function which converts SOLUTION file to list of indexes 
+        # corresponding to order of points visited in SOLUTION.
+        # This will be utilized the same way as best_route in P1
+        
+        solution_coordinates = convert_solution_list(file_name) # NOTE: needs above implementation
+
+        x_coordinates, y_coordinates = get_plot_route(solution_coordinates)
+        plot.plot(x_coordinates, y_coordinates, color=f"{plot_color_dict[index]}", marker=f"Drone #{index+1}",)
             
+    plot.title(input_name[:-4] + " Visualization")
+    plot.savefig(f"{input_name}_OVERALL_SOLUTION.jpeg")
 
-
-        file_line_counts.append(line_count)
-
-    # generate plot
-    # plot.plot(x_coordinates, y_coordinates, color="pink", marker="o")
-    # plot.plot(x_coordinates[0], y_coordinates[0], color="blue", marker="o")
     return False
 
 

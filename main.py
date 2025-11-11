@@ -151,10 +151,18 @@ def main():
     file_names = export_results[1]
     if export_results[0]: # successful export
         output = "Writing "
-        for file_name in file_names:
-            output += f"{file_name} "
+        solution_num = 1
+        for file_name, in file_names:
+            output += f"{file_name}"
+            if solution_num <= solution_choice: # handle formatting for single vs multiple exported files
+                output += ", "
+            elif solution_choice == 1:
+                output += " "
         output += "to disk"
         print(output)
+
+        # TODO: Create function in utils.py which takes all output files and plots them 
+        utils.generate_overall_graph(file_names)
     else:
         print("Solution export unsuccessful")
 
