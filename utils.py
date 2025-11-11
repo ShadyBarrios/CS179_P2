@@ -53,9 +53,9 @@ def parse_input(file_name: str) -> list[Coordinate]:
                     x = float(coordinate_str[0])
                     y = float(coordinate_str[1])
 
-                    if x < 0 or y < 0:
-                        print(f"ERROR: Negative coordinates at line {index}")
-                        exit()
+                    # if x < 0 or y < 0:        # negative coordinates allowed per new information in Nov 9 email from Mr. Keogh
+                    #     print(f"ERROR: Negative coordinates at line {index}")
+                    #     exit()
                 except ValueError:
                     print(f"ERROR: Improper coordinate at line {index}")
                     exit()
@@ -114,6 +114,40 @@ def write_to_file(locations:list[int], file_name:str) -> bool:
     except FileNotFoundError:
         print(f"ERROR: {file_name} could not be opened")
         return False
+    
+# takes list of file_names and creates a unified "overall solution jpeg". Returns true if successful
+def generate_overall_graph(file_names:list[str]) -> bool:
+    num_drones = len(file_names)
+    
+    file_line_counts = [] # stores number of lines per file (aka number of nodes given drone must visit)
+    # output file is stored as a list of locations for drone to visit
+    for file_name in file_names:
+        line_count = 0
+        with open(file_name, "r") as file:
+            data = file.read()
+            line_count = data.count('\n')
+            x_coord, y_coord = get_plot_route()
+
+            
+
+
+        file_line_counts.append(line_count)
+
+    # generate plot
+    # plot.plot(x_coordinates, y_coordinates, color="pink", marker="o")
+    # plot.plot(x_coordinates[0], y_coordinates[0], color="blue", marker="o")
+    return False
+
+
+def get_plot_route(route: list[int], coordinates: list[Coordinate]) -> tuple[list[int], list[int]]:
+    # need to isolate the x and y coordinates for matplot
+    x_coordinates = []
+    y_coordinates = []
+    for coord_idx in route:
+        x_coordinates.append(coordinates[coord_idx-1].get_x())
+        y_coordinates.append(coordinates[coord_idx-1].get_y())
+    return tuple[x_coordinates, y_coordinates]
+
 
 # Adapted from Dr. Keogh's Slides sent via email on 11/9/2025
 def generate_circle_points(center: Coordinate, radius, num_points) -> tuple[list[float], list[float]]:
