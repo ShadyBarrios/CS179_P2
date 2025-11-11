@@ -5,11 +5,8 @@ from coordinate import Coordinate
 from solution import Solution
 
 def calculate_cluster_center(cluster_coordinates: list[Coordinate]) -> Coordinate:
-    num_coordinates = len(cluster_coordinates)
-    x_sum = sum([coordinate.get_x() for coordinate in cluster_coordinates])
-    y_sum = sum([coordinate.get_y() for coordinate in cluster_coordinates])
-    center_x = x_sum / num_coordinates
-    center_y = y_sum / num_coordinates
+    center_x = np.average([coordinate.get_x() for coordinate in cluster_coordinates])
+    center_y = np.average([coordinate.get_y() for coordinate in cluster_coordinates])
     return Coordinate(center_x, center_y)
 
 def k_means_clustering(k, coordinates: list[Coordinate]):
@@ -49,12 +46,15 @@ def k_means_clustering(k, coordinates: list[Coordinate]):
         old_clusters = {k:v for k, v in clusters.items()}
     return centers, clusters
 
-def calculate_squared_error(centers, clusters, coordinate_list):
+def calculate_squared_error(center: Coordinate, coordinates: list[Coordinate]) -> float:
+    return np.sum(np.square([center.distanceTo(coordinate) for coordinate in coordinates]))
+
+def calculate_sum_squared_error(centers, clusters, coordinates):
     objective = 0
-    for cluster_idx, cluster_coords in clusters.items():
+    for cluster_idx, cluster_coordinate_indexes in clusters.items():
         cluster_center = centers[cluster_idx]
-        for coordinate_idx in cluster_coords:
-            objective += (cluster_center.distanceTo(coordinate_list[coordinate_idx])**2)
+        cluster_coordinates = [coordinates[i] for i in cluster_coordinate_indexes]
+        objective += calculate_squared_error(cluster_center, cluster_coordinates)
     return objective
 
 def _find_nearest_neighbor(target: Coordinate, neighbors: list[int], coordinate_list: list[Coordinate], skip_chance):
@@ -122,7 +122,7 @@ def main():
         objective_function = float('inf')
         for _ in range(100):
             centers, clusters = k_means_clustering(num_drones, coordinates)
-            score = calculate_squared_error(centers, clusters, coordinates)
+            score = calculate_sum_squared_error(centers, clusters, coordinates)
             if score < objective_function:
                 objective_function = score
                 centers_bsf = centers
