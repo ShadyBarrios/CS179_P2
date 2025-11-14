@@ -193,3 +193,27 @@ def plot_circles(centers: list[Coordinate], x_coordinates: list[list[float]], y_
     plot.xlabel("X")
     plot.ylabel("Y")
     plot.show()
+
+def plot_clusters(clusters: list[int], coordinates: list[Coordinate]):
+    if len(clusters) < 4: return
+    colors = ["red", "green", "blue", "orange"]
+    for idx in range(len(clusters)):
+        x_coords = [coordinates[i].get_x() for i in clusters[idx]]
+        y_coords = [coordinates[i].get_y() for i in clusters[idx]]
+        plot.plot(x_coords, y_coords, color=colors[idx], marker="None")
+    
+    # 1950 x 1950 minimum
+    dpi = 200
+    min_w_pixels = 1920
+    min_h_pixels = 1920
+    figsize_w = min_w_pixels / dpi
+    figsize_h = min_h_pixels / dpi
+
+    # sets min dimensions as per instructions
+    plot.figure(figsize=(figsize_w, figsize_h), dpi=dpi)
+
+    # hide axes
+    plot.subplot().set_axis_off()
+
+    plot.show()
+        

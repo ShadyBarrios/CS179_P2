@@ -69,14 +69,14 @@ class Solution:
         return (True, file_names)
     
     def export_to_png_file(self, directory:str, root_file_name:str, coordinates:list[Coordinate]) -> tuple[bool, str]:
-        route_colors = ["red", "green", "blue", "yellow"]
-        landing_pad_colors = ["green", "red", "yellow", "blue"] # for contrast
+        route_colors = ["red", "green", "blue", "orange"]
+        landing_pad_colors = ["green", "red", "orange", "blue"] # for contrast
         makedir(directory, exist_ok=True)
 
         file_name = root_file_name + "_OVERALL_SOLUTION.png"
 
         # 1950 x 1950 minimum
-        dpi = 200
+        dpi = 250
         min_w_pixels = 1920
         min_h_pixels = 1920
         figsize_w = min_w_pixels / dpi
@@ -89,17 +89,18 @@ class Solution:
         plot.subplot().set_axis_off()
         
         for i in range(len(self.drone_routes)):
-            x_coordinates = []
-            y_coordinates = []
-            for j in self.drone_routes[i]:
-                x_coordinates.append(coordinates[j-1].get_x())
-                y_coordinates.append(coordinates[j-1].get_y())
+            x_coordinates = [self.landing_pads[i].get_x()]
+            y_coordinates = [self.landing_pads[i].get_y()]
+
+            x_coordinates.extend([coordinates[i].get_x() for i in self.drone_routes[i]])
+            y_coordinates.extend([coordinates[i].get_y() for i in self.drone_routes[i]])
+
+            x_coordinates.append(self.landing_pads[i].get_x())
+            y_coordinates.append(self.landing_pads[i].get_y())
+            
             plot.plot(x_coordinates, y_coordinates, color=route_colors[i], marker="None")
             plot.plot(self.landing_pads[i].get_x(), self.landing_pads[i].get_y(), color=landing_pad_colors[i], marker="o")
         plot.title(file_name[:-4] + " Visualization")
-
-        # 25% buffers around points... doesn't seem to work yet
-        # plot.margins(0.75)
 
         file_name = directory + "/" + file_name
         try:
