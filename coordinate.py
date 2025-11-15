@@ -2,7 +2,7 @@ import math
 
 class Coordinate:
     def __init__(self, x:float, y:float):
-        self.loc = (round(x, 1), round(y, 1))
+        self.loc = (round(x, 3), round(y, 3))
     
     # calculates the euclidean distance from self to arg coor
     def distanceTo(self, coor) -> float:
@@ -11,7 +11,7 @@ class Coordinate:
         x = x*x # will always be positive
         y = y*y # will always be positive
         dist = math.sqrt(x + y)
-        return round(dist, 1)
+        return dist
     
     # determines if self is contained in arg of list[Coordinate]
     def isIn(self, coordinates: list) -> bool:

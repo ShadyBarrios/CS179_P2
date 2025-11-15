@@ -178,7 +178,7 @@ def generate_circle_points(center: Coordinate, radius, num_points) -> tuple[list
     
     return x_coordinates, y_coordinates
 
-def plot_circles(centers: list[Coordinate], x_coordinates: list[list[float]], y_coordinates: list[list[float]], radii: int):
+def plot_circles(centers: list[Coordinate], x_coordinates: list[list[float]], y_coordinates: list[list[float]], radii: int, colors: list[str] = None):
     # Plot for confirmation + report figures
     plot.figure()
     for idx, center in enumerate(centers):
@@ -187,8 +187,12 @@ def plot_circles(centers: list[Coordinate], x_coordinates: list[list[float]], y_
         circle_angles = np.linspace(0, 2*np.pi, 720)
         circle_x = radii * np.cos(circle_angles) + x_center
         circle_y = radii * np.sin(circle_angles) + y_center
-        plot.plot(x_coordinates[idx], y_coordinates[idx], 'ro')
-        plot.plot(circle_x, circle_y, 'b-')
+        if colors:
+            plot.scatter(x_coordinates[idx], y_coordinates[idx], color=colors[idx])
+        else:
+            plot.scatter(x_coordinates[idx], y_coordinates[idx], color='black')
+            plot.plot(circle_x, circle_y, 'b-')
+            plot.plot(x_center, y_center, 'gx')
     plot.axis('equal')
     plot.xlabel("X")
     plot.ylabel("Y")
