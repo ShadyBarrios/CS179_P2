@@ -11,7 +11,7 @@ class Coordinate:
         x = x*x # will always be positive
         y = y*y # will always be positive
         dist = math.sqrt(x + y)
-        return round(dist, 1)
+        return dist
     
     # determines if self is contained in arg of list[Coordinate]
     def isIn(self, coordinates: list) -> bool:
