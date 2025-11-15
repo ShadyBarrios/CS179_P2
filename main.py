@@ -9,6 +9,17 @@ def calculate_cluster_center(cluster_coordinates: list[Coordinate]) -> Coordinat
     center_y = np.average([coordinate.get_y() for coordinate in cluster_coordinates])
     return Coordinate(center_x, center_y)
 
+def assign_coordinate_to_cluster(coordinate: Coordinate, centers: list[Coordinate]) -> int:
+    shortest_dist = float('inf')
+    cluster_idx = -1
+    for center_idx, center in enumerate(centers):
+        distance_to_center = coordinate.distanceTo(center)
+        if distance_to_center < shortest_dist:
+            shortest_dist = distance_to_center
+            cluster_idx = center_idx
+    return cluster_idx
+    
+
 def k_means_clustering(k, coordinates: list[Coordinate]):
     clusters = {}
     old_clusters = None
@@ -21,15 +32,9 @@ def k_means_clustering(k, coordinates: list[Coordinate]):
         
         # Decide class memberships
         for coordinate_idx, coordinate in enumerate(coordinates):
-            shortest_dist = float('inf')
-            cluster_idx = -1
-            for center_idx, center in enumerate(centers):
-                distance_to_center = coordinate.distanceTo(center)
-                if distance_to_center < shortest_dist:
-                    shortest_dist = distance_to_center
-                    cluster_idx = center_idx
+            assigned_cluster_idx = assign_coordinate_to_cluster(coordinate, centers)
             # Store indexes of each coordinate instead of the actual coordinate
-            clusters[cluster_idx].append(coordinate_idx)
+            clusters[assigned_cluster_idx].append(coordinate_idx)
         
         # Calculate new centers
         for cluster_idx, cluster_coordinate_indexes in clusters.items():
