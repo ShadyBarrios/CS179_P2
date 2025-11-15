@@ -2,7 +2,7 @@ import math
 
 class Coordinate:
     def __init__(self, x:float, y:float):
-        self.loc = (round(x, 1), round(y, 1))
+        self.loc = (round(x, 3), round(y, 3))
     
     # calculates the euclidean distance from self to arg coor
     def distanceTo(self, coor) -> float:
