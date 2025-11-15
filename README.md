@@ -38,7 +38,8 @@ Enter the path to the location text file when prompted:
 The program will begin searching for the best possible drone routes, when given one through four drones.
 The estimated time to complete is five minutes.
 
-The program will display four options, each correlated to the number of drones/routes.
+The program will display four options, each correlated to the number of drones/routes. Each option presents unique route distances, landing pad coordinates, and servings per drone.
+
 Choose one of the four options to continue:
 
-The program will display the total route distance, create a '.txt' file containing the shortest route, and create a '.png' file containing a visualization of the route.
+The program will export the desired option to its own .txt solution file and .png visualization file.
